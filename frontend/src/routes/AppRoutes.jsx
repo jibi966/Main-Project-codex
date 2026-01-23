@@ -21,6 +21,7 @@ import CreateCourse from "../components/tutor/CreateCourses";
 import CodeRoom from "../components/user/CodeRoom";
 import CodeEditor from "../components/user/CodeEditor";
 import PraticeEditor from "../components/user/PraticeEditor";
+import Courses from "../components/user/Courses";
 
 // Protected Route
 import ProtectedRoute from "./ProtectedRoute";
@@ -53,6 +54,14 @@ const AppRoutes = () => {
           element={
             <ProtectedRoute role="tutor">
               <CreateCourse />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/user/courses"
+          element={
+            <ProtectedRoute role="user">
+              <Courses />
             </ProtectedRoute>
           }
         />
