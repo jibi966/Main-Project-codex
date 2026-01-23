@@ -22,6 +22,28 @@ const courseSchema = new mongoose.Schema(
       ref: "User", // 🔗 link to tutor
       required: true,
     },
+    modules: [
+      {
+        title: { type: String, required: true },
+        lessons: [
+          {
+            title: { type: String, required: true },
+            videoUrl: { type: String },
+            textContent: { type: String },
+            initialCode: { type: String, default: "// Start coding here..." },
+          },
+        ],
+      },
+    ],
+    isApproved: {
+      type: Boolean,
+      default: false,
+    },
+    status: {
+      type: String,
+      enum: ["pending", "approved", "rejected"],
+      default: "pending",
+    },
   },
   { timestamps: true }
 );

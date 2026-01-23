@@ -22,14 +22,26 @@ const userSchema = new mongoose.Schema(
       default: "user",
     },
     qualification: {
-  type: String,
-  default: "",
-},
-experience: {
-  type: String,
-  default: "",
-},
-
+      type: String,
+      default: "",
+    },
+    experience: {
+      type: String,
+      default: "",
+    },
+    xp: {
+      type: Number,
+      default: 0,
+    },
+    level: {
+      type: Number,
+      default: 1,
+    },
+    badges: [
+      {
+        type: String,
+      },
+    ],
   },
   { timestamps: true }
 );

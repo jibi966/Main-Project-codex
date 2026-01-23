@@ -6,9 +6,13 @@ const {
   getAllCourses,
   getMyCourses,
   getCourseById,
+  updateCourse,
+  deleteCourse,
+  getPendingCourses,
+  approveRejectCourse,
 } = require("../controllers/courseController");
 
-const { protect, tutorOnly } = require("../middleware/authMiddleware");
+const { protect, tutorOnly, adminOnly } = require("../middleware/authMiddleware");
 
 // Tutor creates course
 router.post("/", protect, tutorOnly, createCourse);
@@ -16,10 +20,18 @@ router.post("/", protect, tutorOnly, createCourse);
 // Tutor sees own courses
 router.get("/my", protect, tutorOnly, getMyCourses);
 
-// User sees all courses
+// Tutor updates/deletes own course
+router.put("/:id", protect, tutorOnly, updateCourse);
+router.delete("/:id", protect, tutorOnly, deleteCourse);
+
+// Admin: Approval dashboard routes
+router.get("/pending", protect, adminOnly, getPendingCourses);
+router.patch("/:id/approve", protect, adminOnly, approveRejectCourse);
+
+// User sees all courses (approved only)
 router.get("/", getAllCourses);
 
 // Single course
-router.get("/:id", getCourseById);
+router.get("/:id", protect, getCourseById);
 
 module.exports = router;

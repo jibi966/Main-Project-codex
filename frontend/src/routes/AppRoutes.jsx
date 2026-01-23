@@ -12,16 +12,25 @@ import Register from "../pages/Register";
 
 // Dashboards
 import UserDashboard from "../components/user/UserDashboard";
-import TutorDasboard from "../components/tutor/TutorDasboard";
+import TutorDashboard from "../components/tutor/TutorDashboard";
 import AdminDashboard from "../components/admin/AdminDashboard";
 import CreateCourse from "../components/tutor/CreateCourses";
+import ScheduleLiveClass from "../components/tutor/ScheduleLiveClass";
 
 // User components
 
 import CodeRoom from "../components/user/CodeRoom";
 import CodeEditor from "../components/user/CodeEditor";
-import PraticeEditor from "../components/user/PraticeEditor";
+import PracticeEditor from "../components/user/PracticeEditor";
 import Courses from "../components/user/Courses";
+import LiveClasses from "../components/user/LiveClasses";
+import ChallengesList from "../components/user/ChallengesList";
+import ChallengeEditor from "../components/user/ChallengeEditor";
+import Leaderboard from "../components/user/Leaderboard";
+import MockInterview from "../components/user/MockInterview";
+import CoursePlayer from "../components/user/CoursePlayer";
+import TutorCourseManagement from "../components/tutor/TutorCourseManagement";
+import AdminCourseApproval from "../components/admin/AdminCourseApproval";
 
 // Protected Route
 import ProtectedRoute from "./ProtectedRoute";
@@ -45,6 +54,22 @@ const AppRoutes = () => {
           element={
             <ProtectedRoute role="user">
               <UserDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/user/live-classes"
+          element={
+            <ProtectedRoute role="user">
+              <LiveClasses />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/tutor/schedule-live-class"
+          element={
+            <ProtectedRoute role="tutor">
+              <ScheduleLiveClass />
             </ProtectedRoute>
           }
         />
@@ -88,17 +113,64 @@ const AppRoutes = () => {
           path="/user/practice-editor"
           element={
             <ProtectedRoute role="user">
-              <PraticeEditor />
+              <PracticeEditor />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/user/challenges"
+          element={
+            <ProtectedRoute role="user">
+              <ChallengesList />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/user/challenges/:challengeId"
+          element={
+            <ProtectedRoute role="user">
+              <ChallengeEditor />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/user/leaderboard"
+          element={
+            <ProtectedRoute role="user">
+              <Leaderboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/user/mock-interview"
+          element={
+            <ProtectedRoute role="user">
+              <MockInterview />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/user/courses/:courseId/player"
+          element={
+            <ProtectedRoute role="user">
+              <CoursePlayer />
             </ProtectedRoute>
           }
         />
 
-        {/* ================= TUTOR ROUTES ================= */}
         <Route
           path="/tutor"
           element={
             <ProtectedRoute role="tutor">
-              <TutorDasboard />
+              <TutorDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/tutor/manage-courses"
+          element={
+            <ProtectedRoute role="tutor">
+              <TutorCourseManagement />
             </ProtectedRoute>
           }
         />
@@ -109,6 +181,14 @@ const AppRoutes = () => {
           element={
             <ProtectedRoute role="admin">
               <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/approvals"
+          element={
+            <ProtectedRoute role="admin">
+              <AdminCourseApproval />
             </ProtectedRoute>
           }
         />

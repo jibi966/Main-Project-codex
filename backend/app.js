@@ -21,13 +21,20 @@ app.use("/api/compile", compileRoutes);
 const liveClassRoutes = require("./routes/liveClassRoutes");
 
 app.use("/api/live-classes", liveClassRoutes);
+const aiRoutes = require("./routes/aiRoutes");
+app.use("/api/ai", aiRoutes);
+const challengeRoutes = require("./routes/challengeRoutes");
+app.use("/api/challenges", challengeRoutes);
+const aiInterviewRoutes = require("./routes/aiInterviewRoutes");
+app.use("/api/ai-interview", aiInterviewRoutes);
 
 
 
 
 const courseRoutes = require("./routes/courseRoutes");
-
 app.use("/api/courses", courseRoutes);
+const enrollmentRoutes = require("./routes/enrollmentRoutes");
+app.use("/api/enrollments", enrollmentRoutes);
 
 
 
