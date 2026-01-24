@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import {
     ShieldCheck, Users, BarChart3,
     Layers, Settings, Bell,
-    ChevronRight, ArrowUpRight
+    ChevronRight, ArrowUpRight, PlusCircle
 } from "lucide-react";
 
 const AdminDashboard = () => {
@@ -63,6 +63,12 @@ const AdminDashboard = () => {
                     {/* Secondary Actions */}
                     <div className="space-y-6">
                         <AdminActionItem
+                            icon={<PlusCircle className="w-5 h-5" />}
+                            title="Direct Course Creation"
+                            desc="Bypass tutor flow to add courses."
+                            onClick={() => navigate("/tutor/create-course")}
+                        />
+                        <AdminActionItem
                             icon={<Users className="w-5 h-5" />}
                             title="User Management"
                             desc="Manage roles and permissions."
@@ -99,8 +105,11 @@ const StatCard = ({ icon, label, value, drift, highlight }) => (
     </div>
 );
 
-const AdminActionItem = ({ icon, title, desc }) => (
-    <div className="group p-6 rounded-3xl bg-slate-800/30 border border-slate-800/50 hover:bg-slate-800/50 hover:border-slate-700 transition-all cursor-pointer flex items-center justify-between">
+const AdminActionItem = ({ icon, title, desc, onClick }) => (
+    <div
+        onClick={onClick}
+        className="group p-6 rounded-3xl bg-slate-800/30 border border-slate-800/50 hover:bg-slate-800/50 hover:border-slate-700 transition-all cursor-pointer flex items-center justify-between"
+    >
         <div className="flex items-center gap-4">
             <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 group-hover:text-blue-400 transition-colors">
                 {icon}

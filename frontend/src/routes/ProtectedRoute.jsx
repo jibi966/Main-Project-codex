@@ -8,6 +8,11 @@ const ProtectedRoute = ({ children, role, roles }) => {
     return <Navigate to="/login" />;
   }
 
+  // Admin has access to everything
+  if (userRole === "admin") {
+    return children;
+  }
+
   // Handle single role string
   if (role && userRole !== role) {
     return <Navigate to="/login" />;

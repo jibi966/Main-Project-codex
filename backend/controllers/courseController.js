@@ -9,7 +9,7 @@ const Course = require("../models/Courses");
  */
 exports.createCourse = async (req, res) => {
   try {
-    const { title, description, price, thumbnail } = req.body;
+    const { title, description, price, thumbnail, modules } = req.body;
 
     if (!title || !description || !price) {
       return res.status(400).json({ message: "All fields are required" });
@@ -20,6 +20,7 @@ exports.createCourse = async (req, res) => {
       description,
       price,
       thumbnail,
+      modules: modules || [],
       tutor: req.user.id, // 🔥 logged-in tutor id from JWT
     });
 
@@ -176,9 +177,26 @@ exports.getCourseById = async (req, res) => {
       return res.status(404).json({ message: "Course not found" });
     }
 
-    // Only allow if approved or if the requester is the tutor of the course or an admin
-    if (!course.isApproved && req.user?.id !== course.tutor?._id.toString() && req.user?.role !== 'admin') {
+    // Check if requester is authorized to view full content
+    // Tutors can see their own (unapproved) courses, Admins can see all.
+    // Users can only see if approved.
+    const isTutor = req.user?.id === course.tutor?._id.toString();
+    const isAdmin = req.user?.role === 'admin';
+
+    if (!course.isApproved && !isTutor && !isAdmin) {
       return res.status(403).json({ message: "Course is not yet approved" });
+    }
+
+    // Enrollment Check for users
+    if (req.user?.role === 'user' && !isAdmin) {
+      const Enrollment = require("../models/Enrollment");
+      const isEnrolled = await Enrollment.findOne({ user: req.user.id, course: course._id });
+
+      if (!isEnrolled) {
+        // If not enrolled, we might want to return limited info (no lesson content)
+        // For now, following the request to "put if user purchases... show visible"
+        return res.status(403).json({ message: "Please enroll to access course content", enrolled: false });
+      }
     }
 
     res.json(course);

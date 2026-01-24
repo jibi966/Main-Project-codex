@@ -30,8 +30,19 @@ const getSingleResume = async (req, res) => {
     }
 };
 
+// Update resume
+const updateResume = async (req, res) => {
+    try {
+        const resume = await Resume.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        res.json(resume);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
 module.exports = {
     createResume,
     getAllResumes,
     getSingleResume,
+    updateResume,
 };

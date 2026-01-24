@@ -23,8 +23,8 @@ const protect = async (req, res, next) => {
 };
 
 const tutorOnly = (req, res, next) => {
-  if (req.user.role !== "tutor") {
-    return res.status(403).json({ message: "Tutor access only" });
+  if (req.user.role !== "tutor" && req.user.role !== "admin") {
+    return res.status(403).json({ message: "Tutor or Admin access only" });
   }
   next();
 };

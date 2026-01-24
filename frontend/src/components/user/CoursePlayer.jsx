@@ -2,11 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../../services/api";
 import Navbar from "../common/Navbar";
-import Editor from "@monaco-editor/react";
 import {
     Play, CheckCircle, ChevronRight, ChevronLeft,
-    BookOpen, Terminal, RefreshCw, Layers,
-    Video, FileText, Star, Lock
+    BookOpen, Layers, Video, FileText, Star, AlertCircle
 } from "lucide-react";
 
 const CoursePlayer = () => {
@@ -15,10 +13,8 @@ const CoursePlayer = () => {
 
     const [course, setCourse] = useState(null);
     const [activeLesson, setActiveLesson] = useState(null);
-    const [code, setCode] = useState("");
-    const [output, setOutput] = useState("");
     const [loading, setLoading] = useState(true);
-    const [running, setRunning] = useState(false);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchCourse = async () => {
@@ -28,10 +24,10 @@ const CoursePlayer = () => {
                 if (res.data.modules?.[0]?.lessons?.[0]) {
                     const firstLesson = res.data.modules[0].lessons[0];
                     setActiveLesson(firstLesson);
-                    setCode(firstLesson.initialCode || "// Start coding here...");
                 }
             } catch (err) {
-                console.error("Failed to fetch course details");
+                console.error("Failed to fetch course details", err);
+                setError(err.response?.data?.message || "Something went wrong");
             } finally {
                 setLoading(false);
             }
@@ -41,29 +37,39 @@ const CoursePlayer = () => {
 
     const handleLessonSelect = (lesson) => {
         setActiveLesson(lesson);
-        setCode(lesson.initialCode || "// Start coding here...");
-        setOutput("");
     };
 
-    const runCode = async () => {
-        setRunning(true);
-        setOutput("");
-        try {
-            const res = await api.post("/compile/run", {
-                code,
-                language: "javascript"
-            });
-            setOutput(res.data.output);
-        } catch (err) {
-            setOutput("Error: Runtime failure.");
-        } finally {
-            setRunning(false);
-        }
+    // Utility to get YouTube Embed URL
+    const getEmbedUrl = (url) => {
+        if (!url) return null;
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+        const match = url.match(regExp);
+        return (match && match[2].length === 11)
+            ? `https://www.youtube.com/embed/${match[2]}`
+            : url;
     };
 
     if (loading) return (
         <div className="min-h-screen bg-slate-950 flex items-center justify-center">
             <div className="w-12 h-12 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin"></div>
+        </div>
+    );
+
+    if (error) return (
+        <div className="min-h-screen bg-slate-950 flex items-center justify-center p-6">
+            <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-[2.5rem] p-10 text-center shadow-2xl">
+                <div className="w-16 h-16 bg-red-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <AlertCircle className="w-8 h-8 text-red-500" />
+                </div>
+                <h1 className="text-2xl font-black text-white mb-4 uppercase tracking-tight">Access Restricted</h1>
+                <p className="text-slate-400 mb-8 font-medium">{error}</p>
+                <button
+                    onClick={() => navigate('/user/courses')}
+                    className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-black rounded-2xl transition-all active:scale-95"
+                >
+                    BROWSE COURSES
+                </button>
+            </div>
         </div>
     );
 
@@ -76,29 +82,27 @@ const CoursePlayer = () => {
             <div className="flex-1 flex overflow-hidden">
                 {/* LEFT: Sidebar Navigation */}
                 <aside className="w-80 bg-slate-900 border-r border-slate-800 flex flex-col overflow-y-auto custom-scrollbar">
-                    <div className="p-6 border-b border-slate-800">
-                        <h2 className="text-sm font-black text-slate-500 uppercase tracking-widest mb-1">Curriculum</h2>
-                        <h3 className="font-bold text-lg leading-tight truncate">{course.title}</h3>
+                    <div className="p-6 border-b border-slate-800 bg-slate-900/50 sticky top-0 z-20 backdrop-blur-md">
+                        <h2 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-1">Curriculum</h2>
+                        <h3 className="font-bold text-lg leading-tight truncate text-blue-400">{course.title}</h3>
                     </div>
 
                     <div className="flex-1">
                         {course.modules?.map((module, mIdx) => (
                             <div key={mIdx} className="border-b border-slate-800 last:border-0">
-                                <div className="px-6 py-4 bg-slate-800/20 font-bold text-xs text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                                <div className="px-6 py-4 bg-slate-800/20 font-black text-[10px] text-slate-500 uppercase tracking-widest flex items-center gap-2">
                                     <Layers className="w-3 h-3 text-blue-500" />
-                                    Module {mIdx + 1}: {module.title}
+                                    {module.title || `Module ${mIdx + 1}`}
                                 </div>
-                                <div className="py-2">
+                                <div className="py-1">
                                     {module.lessons?.map((lesson, lIdx) => (
                                         <button
                                             key={lIdx}
                                             onClick={() => handleLessonSelect(lesson)}
-                                            className={`w-full px-6 py-4 flex items-center gap-3 text-left transition-all hover:bg-slate-800/50 ${activeLesson?.title === lesson.title ? 'bg-blue-600/10 border-l-4 border-blue-500 text-blue-400' : 'text-slate-400'}`}
+                                            className={`w-full px-6 py-4 flex items-center gap-3 text-left transition-all ${activeLesson?.title === lesson.title ? 'bg-blue-600/10 border-l-4 border-blue-500 text-blue-400' : 'text-slate-400 hover:bg-slate-800/30'}`}
                                         >
-                                            {activeLesson?.title === lesson.title ? <Play className="w-4 h-4 fill-current" /> : <BookOpen className="w-4 h-4 opacity-50" />}
-                                            <span className="text-sm font-semibold">{lesson.title}</span>
-                                            {/* Mock completion logic */}
-                                            <CheckCircle className={`w-4 h-4 ml-auto opacity-20`} />
+                                            {activeLesson?.title === lesson.title ? <Play className="w-3.5 h-3.5 fill-current" /> : <Video className="w-3.5 h-3.5 opacity-30" />}
+                                            <span className="text-sm font-bold tracking-tight">{lesson.title}</span>
                                         </button>
                                     ))}
                                 </div>
@@ -108,118 +112,65 @@ const CoursePlayer = () => {
                 </aside>
 
                 {/* MIDDLE: Content Area */}
-                <main className="flex-1 flex flex-col relative bg-slate-900">
+                <main className="flex-1 flex flex-col relative bg-[#020617]">
                     {/* Header with Title */}
-                    <div className="px-8 py-4 border-b border-slate-800 flex justify-between items-center bg-slate-900/50 backdrop-blur-md sticky top-0 z-10">
+                    <div className="px-8 py-4 border-b border-slate-800 flex justify-between items-center bg-slate-900/30 backdrop-blur-xl sticky top-0 z-10">
                         <div className="flex items-center gap-3">
-                            <div className="p-2 rounded-lg bg-blue-500/10 text-blue-400">
+                            <div className="p-2 rounded-xl bg-blue-600/20 text-blue-400 shadow-lg shadow-blue-900/10">
                                 <Video className="w-4 h-4" />
                             </div>
-                            <h1 className="font-bold tracking-tight">{activeLesson?.title || "Select a lesson"}</h1>
+                            <h1 className="font-black text-white tracking-tight text-lg">{activeLesson?.title || "Select a lesson"}</h1>
                         </div>
-                        <div className="flex items-center gap-2 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-black uppercase tracking-widest rounded-lg">
-                            <Star className="w-3 h-3 fill-current" /> Lesson Mode
+                        <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-600/10 border border-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-widest rounded-lg">
+                            <Star className="w-3 h-3 fill-current animate-pulse" /> Live Session
                         </div>
                     </div>
 
                     <div className="flex-1 overflow-y-auto custom-scrollbar">
                         {/* Video Player */}
-                        <div className="aspect-video bg-black relative group">
+                        <div className="w-full max-w-5xl mx-auto mt-8 aspect-video bg-black relative group shadow-2xl rounded-3xl overflow-hidden border border-slate-800">
                             {activeLesson?.videoUrl ? (
                                 <iframe
-                                    src={activeLesson.videoUrl}
+                                    src={getEmbedUrl(activeLesson.videoUrl)}
                                     className="w-full h-full"
                                     title="Lesson Video"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                     allowFullScreen
                                 ></iframe>
                             ) : (
-                                <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-700">
-                                    <Video className="w-16 h-16 mb-4 opacity-20" />
-                                    <p className="font-bold text-sm">No video available for this lesson</p>
+                                <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-800 bg-slate-950">
+                                    <Video className="w-16 h-16 mb-4 opacity-5" />
+                                    <p className="font-black text-xs uppercase tracking-widest opacity-20">Stream unavailable for this unit</p>
                                 </div>
                             )}
                         </div>
 
                         {/* Lesson Text Content */}
-                        <div className="p-10 max-w-4xl prose prose-invert prose-sm">
-                            <h2 className="text-2xl font-extrabold mb-6 tracking-tight flex items-center gap-3">
-                                <FileText className="w-6 h-6 text-blue-400" /> Lesson Instructions
+                        <div className="p-12 max-w-5xl mx-auto">
+                            <h2 className="text-sm font-black text-slate-500 uppercase tracking-[0.3em] mb-6 flex items-center gap-3">
+                                <FileText className="w-4 h-4 text-blue-500" /> Lesson Intel
                             </h2>
-                            <div className="text-slate-400 leading-relaxed whitespace-pre-wrap text-base">
-                                {activeLesson?.textContent || "Use the code editor on the right to practice what you learn in the video."}
+                            <div className="text-slate-400 leading-relaxed whitespace-pre-wrap text-lg font-medium">
+                                {activeLesson?.textContent || "Enjoy the lesson. Use the sidebar to navigate through the curriculum."}
                             </div>
                         </div>
                     </div>
                 </main>
-
-                {/* RIGHT: Practice Editor Side-panel */}
-                <aside className="w-[45vw] bg-slate-950 border-l border-slate-800 flex flex-col">
-                    <div className="px-6 py-4 border-b border-slate-800 flex justify-between items-center">
-                        <div className="flex items-center gap-3">
-                            <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400">
-                                <Terminal className="w-4 h-4" />
-                            </div>
-                            <span className="font-bold text-sm tracking-tight">Interactive Playground</span>
-                        </div>
-                        <button
-                            onClick={runCode}
-                            disabled={running}
-                            className="flex items-center gap-2 px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl transition-all active:scale-95 disabled:opacity-50"
-                        >
-                            {running ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Play className="w-3.5 h-3.5 fill-current" />}
-                            RUN CODE
-                        </button>
-                    </div>
-
-                    <div className="flex-1 relative">
-                        <Editor
-                            height="100%"
-                            theme="vs-dark"
-                            language="javascript"
-                            value={code}
-                            onChange={(val) => setCode(val)}
-                            options={{
-                                fontSize: 14,
-                                minimap: { enabled: false },
-                                scrollBeyondLastLine: false,
-                                automaticLayout: true,
-                                padding: { top: 20 },
-                                fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
-                            }}
-                        />
-                    </div>
-
-                    {/* Mini Console */}
-                    <div className="h-48 bg-slate-950 border-t border-slate-800 p-6 overflow-auto custom-scrollbar">
-                        <h3 className="text-[10px] font-black text-slate-600 uppercase tracking-widest mb-4 flex items-center gap-2">
-                            <ChevronRight className="w-3 h-3" /> Output Console
-                        </h3>
-                        <pre className="font-mono text-xs text-emerald-400 leading-relaxed">
-                            {output ? (
-                                <div className={output.includes("Error") ? "text-red-400" : "text-emerald-400"}>
-                                    <span className="opacity-50 mr-2">$</span> {output}
-                                </div>
-                            ) : (
-                                <div className="text-slate-700 italic">Code output will appear here...</div>
-                            )}
-                        </pre>
-                    </div>
-                </aside>
             </div>
 
             {/* Navigation Footer */}
-            <footer className="h-16 bg-slate-900 border-t border-slate-800 px-8 flex justify-between items-center z-20 shadow-2xl">
-                <button className="flex items-center gap-2 text-slate-500 hover:text-white transition-colors text-sm font-bold">
-                    <ChevronLeft className="w-4 h-4" /> Previous Lesson
+            <footer className="h-20 bg-slate-900/50 backdrop-blur-xl border-t border-slate-800 px-10 flex justify-between items-center z-20 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
+                <button className="flex items-center gap-2 text-slate-500 hover:text-white transition-all text-xs font-black uppercase tracking-widest group">
+                    <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Prev Unit
                 </button>
-                <div className="flex items-center gap-2">
-                    <div className="w-48 h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                        <div className="h-full bg-blue-500 w-1/3"></div>
+                <div className="flex items-center gap-4">
+                    <div className="w-64 h-1.5 bg-slate-800 rounded-full overflow-hidden p-0.5 border border-slate-700">
+                        <div className="h-full bg-gradient-to-r from-blue-600 to-indigo-500 rounded-full w-1/3 shadow-[0_0_10px_rgba(37,99,235,0.3)]"></div>
                     </div>
-                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-wider ml-2">Progress 33%</span>
+                    <span className="text-[10px] font-black text-blue-500 uppercase tracking-widest">In Progress</span>
                 </div>
-                <button className="flex items-center gap-2 px-6 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl text-sm font-bold transition-all">
-                    Next Lesson <ChevronRight className="w-4 h-4 text-blue-500" />
+                <button className="flex items-center gap-2 px-8 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-2xl text-xs font-black uppercase tracking-widest transition-all group">
+                    Next Unit <ChevronRight className="w-4 h-4 text-blue-400 group-hover:translate-x-1 transition-transform" />
                 </button>
             </footer>
         </div>
