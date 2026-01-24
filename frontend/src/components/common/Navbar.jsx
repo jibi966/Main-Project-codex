@@ -14,7 +14,6 @@ const Navbar = () => {
     <nav className="sticky top-0 z-50 w-full bg-slate-900/80 backdrop-blur-md border-b border-white/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-
           {/* LOGO */}
           <Link to="/" className="flex items-center gap-2 group">
             <div className="p-2 bg-blue-600 rounded-lg group-hover:bg-blue-500 transition-colors">
@@ -42,14 +41,29 @@ const Navbar = () => {
           {/* DESKTOP LINKS */}
           <div className="hidden md:flex items-center gap-6">
             <div className="flex items-center gap-6 text-sm font-medium">
-              <Link to="/user/dashboard" className={`transition-colors duration-200 ${isActive("/user/dashboard")}`}>
+              <Link
+                to="/user/dashboard"
+                className={`transition-colors duration-200 ${isActive("/user/dashboard")}`}
+              >
                 Dashboard
               </Link>
-              <Link to="/user/courses" className={`transition-colors duration-200 ${isActive("/user/courses")}`}>
+              <Link
+                to="/user/courses"
+                className={`transition-colors duration-200 ${isActive("/user/courses")}`}
+              >
                 Courses
               </Link>
-              <Link to="/blogs" className={`transition-colors duration-200 ${isActive("/blogs")}`}>
+              <Link
+                to="/blogs"
+                className={`transition-colors duration-200 ${isActive("/blogs")}`}
+              >
                 Blogs
+              </Link>
+              <Link
+                to="/resume-builder"
+                className={`transition-colors duration-200 ${isActive("/resume-builder")}`}
+              >
+                Resume Builder
               </Link>
             </div>
 
@@ -77,7 +91,11 @@ const Navbar = () => {
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="text-slate-300 hover:text-white p-2"
             >
-              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isMenuOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
             </button>
           </div>
         </div>

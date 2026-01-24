@@ -34,6 +34,7 @@ import AdminCourseApproval from "../components/admin/AdminCourseApproval";
 
 // Protected Route
 import ProtectedRoute from "./ProtectedRoute";
+import { ResumeBuilder } from "../components/user/ResumeBuilder";
 
 const AppRoutes = () => {
   return (
@@ -79,6 +80,14 @@ const AppRoutes = () => {
           element={
             <ProtectedRoute role="tutor">
               <CreateCourse />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/resume-builder"
+          element={
+            <ProtectedRoute roles={["user", "tutor"]}>
+              <ResumeBuilder />
             </ProtectedRoute>
           }
         />
