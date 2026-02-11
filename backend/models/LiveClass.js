@@ -23,6 +23,11 @@ const liveClassSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
+    status: {
+      type: String,
+      enum: ["scheduled", "ended"],
+      default: "scheduled",
+    },
   },
   { timestamps: true }
 );

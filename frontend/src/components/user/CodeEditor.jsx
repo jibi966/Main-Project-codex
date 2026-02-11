@@ -27,6 +27,7 @@ const CodeEditor = () => {
   // 💬 Chat state
   const [messages, setMessages] = useState([]);
   const [chatInput, setChatInput] = useState("");
+  const [showChat, setShowChat] = useState(false);
 
   useEffect(() => {
     if (!password) {
@@ -111,7 +112,7 @@ const CodeEditor = () => {
   };
 
   return (
-    <div className="h-screen bg-slate-950 text-white font-sans flex flex-col overflow-hidden">
+    <div className="min-h-screen bg-slate-950 text-white font-sans flex flex-col overflow-hidden relative">
 
       {/* 🔝 HEADER / CONTROLS */}
       <div className="flex justify-between items-center px-6 py-3 bg-slate-900/80 border-b border-slate-800 backdrop-blur-md relative z-10">
@@ -162,7 +163,7 @@ const CodeEditor = () => {
           <button
             onClick={runCode}
             disabled={loading}
-            className="flex items-center gap-2 px-5 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl transition-all hover:scale-105 active:scale-95 disabled:opacity-50"
+            className="flex items-center gap-2 px-5 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-blue-500/20 transition-all hover:scale-105 active:scale-95 disabled:opacity-50"
           >
             {loading ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Play className="w-3.5 h-3.5 fill-current" />}
             RUN CODE
@@ -213,29 +214,33 @@ const CodeEditor = () => {
             </pre>
           </div>
         </div>
+      </div>
 
-        {/* 💬 CHAT PANEL (Right) */}
-        <div className="w-80 lg:w-96 bg-slate-900 border-l border-slate-800 flex flex-col relative z-20">
-          <div className="px-6 py-4 border-b border-slate-800 flex justify-between items-center group cursor-default">
+      {/* 💬 FLOATING CHAT WINDOW (Same as CoursePlayer style) */}
+      {showChat && (
+        <div className="fixed bottom-6 right-6 w-96 h-[500px] bg-slate-900 border border-slate-800 rounded-[2rem] shadow-2xl flex flex-col overflow-hidden z-[100] animate-in slide-in-from-bottom-5">
+          {/* Header */}
+          <div className="p-5 border-b border-slate-800 bg-slate-900/50 backdrop-blur-xl flex justify-between items-center">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-indigo-500/10 text-indigo-400">
-                <MessageSquare className="w-4 h-4" />
+              <div className="w-10 h-10 bg-blue-600/20 rounded-xl flex items-center justify-center text-blue-400">
+                <MessageSquare className="w-5 h-5" />
               </div>
-              <span className="font-bold text-sm tracking-tight">TEAM CHAT</span>
+              <div>
+                <h3 className="text-xs font-black text-white uppercase tracking-tight">Team Chat</h3>
+                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Collaborative Session</p>
+              </div>
             </div>
-            <div className="flex -space-x-2">
-              <div className="w-6 h-6 rounded-full bg-blue-500 border-2 border-slate-900 flex items-center justify-center text-[10px] font-bold">Y</div>
-              <div className="w-6 h-6 rounded-full bg-purple-500 border-2 border-slate-900 flex items-center justify-center text-[10px] font-bold">M</div>
-            </div>
+            <button onClick={() => setShowChat(false)} className="p-2 hover:bg-slate-800 rounded-xl text-slate-500 hover:text-white transition-all">
+              <XCircle className="w-5 h-5" />
+            </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar bg-slate-900/50">
+          {/* Messages */}
+          <div className="flex-1 overflow-y-auto p-5 space-y-4 custom-scrollbar">
             {messages.length === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center text-center p-4">
-                <div className="w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center mb-4 text-slate-600">
-                  <Clock className="w-6 h-6" />
-                </div>
-                <p className="text-xs text-slate-500 font-medium">No messages yet.<br />Start the conversation!</p>
+              <div className="h-full flex flex-col items-center justify-center text-center opacity-30 select-none">
+                <Clock className="w-12 h-12 mb-2" />
+                <p className="text-[10px] font-black uppercase tracking-[0.2em]">No messages yet</p>
               </div>
             ) : (
               messages.map((msg, i) => {
@@ -243,14 +248,16 @@ const CodeEditor = () => {
                 return (
                   <div key={i} className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
                     <div className="flex items-center gap-2 mb-1 px-1">
-                      {!isMe && <span className="text-[10px] font-black text-indigo-400 uppercase">{msg.sender}</span>}
-                      <span className="text-[9px] font-bold text-slate-600">{msg.time}</span>
+                      {!isMe && <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest leading-none">{msg.sender}</span>}
                     </div>
-                    <div className={`max-w-[85%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${isMe
-                      ? 'bg-blue-600 text-white rounded-tr-none'
+                    <div className={`max-w-[85%] p-4 rounded-2xl text-sm ${isMe
+                      ? 'bg-blue-600 text-white rounded-tr-none shadow-lg shadow-blue-900/10'
                       : 'bg-slate-800 text-slate-200 rounded-tl-none border border-slate-700/50'
                       }`}>
-                      {msg.message}
+                      <p className="leading-relaxed">{msg.message}</p>
+                      <p className={`text-[8px] mt-2 font-bold uppercase ${isMe ? "text-blue-200" : "text-slate-500"}`}>
+                        {msg.time}
+                      </p>
                     </div>
                   </div>
                 );
@@ -259,25 +266,47 @@ const CodeEditor = () => {
             <div ref={chatEndRef} />
           </div>
 
-          <form onSubmit={sendMessage} className="p-4 bg-slate-900/80 backdrop-blur-md border-t border-slate-800">
-            <div className="relative group">
+          {/* Input */}
+          <form onSubmit={sendMessage} className="p-4 bg-slate-900/50 border-t border-slate-800">
+            <div className="relative">
               <input
                 value={chatInput}
                 onChange={(e) => setChatInput(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 p-4 pr-12 rounded-2xl text-xs font-medium focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all placeholder:text-slate-600"
                 placeholder="Type your message..."
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 pl-4 pr-12 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
               />
               <button
                 type="submit"
                 disabled={!chatInput.trim()}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-2 bg-blue-600 text-white rounded-xl hover:bg-blue-500 transition-all active:scale-90 disabled:opacity-30 disabled:hover:scale-100"
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white rounded-lg transition-all active:scale-90"
               >
                 <Send className="w-4 h-4" />
               </button>
             </div>
           </form>
         </div>
-      </div>
+      )}
+
+      {/* 🔮 FLOATING CHAT TOGGLE */}
+      {!showChat && (
+        <button
+          onClick={() => setShowChat(true)}
+          className="fixed bottom-6 right-6 p-4 bg-blue-600 text-white rounded-full shadow-2xl hover:scale-110 active:scale-95 transition-all z-[100] group animate-bounce-subtle border-2 border-slate-950"
+          title="Open Team Chat"
+        >
+          <div className="relative">
+            <MessageSquare className="w-6 h-6" />
+            {messages.length > 0 && (
+              <div className="absolute -top-3 -right-3 flex items-center justify-center">
+                <div className="absolute inset-0 bg-red-500 rounded-full animate-ping opacity-40"></div>
+                <div className="relative min-w-[20px] h-5 px-1.5 bg-gradient-to-br from-red-500 to-rose-600 rounded-full flex items-center justify-center text-[10px] font-black border-2 border-slate-950 shadow-[0_0_20px_rgba(239,68,68,0.6)]">
+                  {messages.length}
+                </div>
+              </div>
+            )}
+          </div>
+        </button>
+      )}
     </div>
   );
 };

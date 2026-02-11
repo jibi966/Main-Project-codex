@@ -25,6 +25,12 @@ module.exports = (io) => {
       socket.to(roomId).emit("receive-code", code);
     });
 
+    // 💬 REAL-TIME CHAT (Coderoom)
+    socket.on("send-message", (data) => {
+      const { roomId } = data;
+      io.to(roomId).emit("receive-message", data);
+    });
+
     // 🗯️ DOUBT CLEARING CHAT (Real-time student-tutor)
     socket.on("join-doubt-chat", ({ courseId, studentId, tutorId }) => {
       const doubtRoomId = `doubt_${String(courseId)}_${String(studentId)}_${String(tutorId)}`;

@@ -24,7 +24,8 @@ const LiveClasses = () => {
     const classTime = new Date(schedule).getTime();
     const currentTime = new Date().getTime();
     const diff = (classTime - currentTime) / (1000 * 60); // Difference in minutes
-    return diff <= 5; // Enable 5 minutes before
+    // Joinable if it's within 5 minutes of starting OR it's already started (up to 2 hours)
+    return diff <= 5 && diff >= -120;
   };
 
   return (
