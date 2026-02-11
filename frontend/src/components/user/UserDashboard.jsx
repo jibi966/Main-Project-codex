@@ -213,7 +213,7 @@ const UserDashboard = () => {
                     initial={{ x: -50, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
                     transition={{ duration: 0.8, delay: 0.3 }}
-                    className="text-7xl lg:text-9xl font-black tracking-tighter leading-[0.85] uppercase italic"
+                    className="text-6xl sm:text-7xl lg:text-9xl font-black tracking-tighter leading-[0.85] uppercase italic"
                   >
                     Forge <br />
                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-500 to-purple-600 animate-gradient-text">
@@ -237,10 +237,10 @@ const UserDashboard = () => {
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 0.6 }}
-                    className="flex items-center gap-6 p-6 bg-slate-900/30 border border-slate-800/50 rounded-[2.5rem] backdrop-blur-2xl group hover:border-blue-500/30 transition-all duration-500"
+                    className="flex flex-col sm:flex-row items-center gap-6 p-6 sm:p-8 bg-slate-900/30 border border-slate-800/50 rounded-[2.5rem] backdrop-blur-2xl group hover:border-blue-500/30 transition-all duration-500 w-full sm:w-auto"
                   >
                     <CircularProgress progress={Math.round((stats.xp / (stats.level * 100)) * 100)} size={80} />
-                    <div className="space-y-1">
+                    <div className="space-y-1 text-center sm:text-left">
                       <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">XP Progression</div>
                       <div className="text-2xl font-black tabular-nums">{stats.xp} <span className="text-slate-600 text-sm">/ {stats.level * 100}</span></div>
                       <div className="text-[10px] text-blue-400 font-bold uppercase tracking-tighter">Level {stats.level} Overseer</div>
@@ -286,7 +286,7 @@ const UserDashboard = () => {
                       <>
                         <div className="flex justify-between items-start mb-8 relative z-10">
                           <div className="space-y-1">
-                            <h3 className="text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-2">Resume Session</h3>
+                            <h3 className="text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-2">Courses</h3>
                             <p className="text-2xl font-black tracking-tight leading-tight">{lastCourse.title}</p>
                           </div>
                           <motion.div
@@ -406,8 +406,8 @@ const UserDashboard = () => {
       </section>
 
       {/* Daily Status & Activity */}
-      <section className="pb-24 relative z-10">
-        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-8">
+      <section className="pb-12 md:pb-24 relative z-10">
+        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-6 md:gap-8">
           {/* Daily Streak */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -485,7 +485,7 @@ const UserDashboard = () => {
       </section>
 
       {/* Modern Tool Grid */}
-      <section className="py-32 relative">
+      <section className="py-16 md:py-32 relative">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.03)_0%,transparent_100%)]"></div>
 
         <div className="max-w-7xl mx-auto px-6 relative z-10">
@@ -511,7 +511,7 @@ const UserDashboard = () => {
             </div>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             <FeatureCard
               icon={<Code className="w-8 h-8 text-blue-400" />}
               title="Code Room"
@@ -522,7 +522,7 @@ const UserDashboard = () => {
             />
             <FeatureCard
               icon={<BookOpen className="w-8 h-8 text-indigo-400" />}
-              title="Academy"
+              title="Courses"
               desc="Structured learning paths curated by industry experts and AI mentors."
               onClick={() => navigate("/user/courses")}
               color="indigo"
@@ -562,7 +562,7 @@ const UserDashboard = () => {
             />
             <FeatureCard
               icon={<Award className="w-8 h-8 text-cyan-400" />}
-              title="Practice Sandbox"
+              title="Practice Editor"
               desc="Zero-config isolated environments for testing architectural patterns."
               onClick={() => navigate("/user/practice-editor")}
               color="cyan"

@@ -1,3 +1,4 @@
+const SupportMessage = require("../models/SupportMessage");
 const rooms = {}; // roomId : password
 
 module.exports = (io) => {
@@ -74,6 +75,53 @@ module.exports = (io) => {
 
       // 2. Notify the recipient's lobby
       io.to(recipientLobby).emit("new-message-notification", payload);
+    });
+
+    // 🛠️ SUPPORT CHAT (Real-time student/tutor with admin)
+    socket.on("join-support", (userId) => {
+      socket.join(`support_${String(userId)}`);
+      console.log(`[Socket] User ${socket.id} joined support room: support_${userId}`);
+    });
+
+    socket.on("join-admin-support", () => {
+      socket.join("admin_support_lobby");
+      console.log(`[Socket] Admin ${socket.id} joined support lobby`);
+    });
+
+    socket.on("send-support-message", async (data) => {
+      const { supportUserId, message, senderId, senderName, role, isAdmin } = data;
+      const room = `support_${String(supportUserId)}`;
+
+      console.log(`[Socket] Support Message from ${senderName} to ${supportUserId}: ${message}`);
+
+      try {
+        const newMessage = await SupportMessage.create({
+          sender: senderId,
+          senderName,
+          message,
+          role,
+          isAdmin,
+          supportUserId
+        });
+
+        const payload = {
+          ...data,
+          _id: newMessage._id,
+          createdAt: newMessage.createdAt
+        };
+
+        // Broadcast to the user's support room (both user and admin listen here)
+        io.to(room).emit("receive-support-message", payload);
+        console.log(`[Socket] Broadcasted support message to room: ${room}`);
+
+        // If it's a new message from a user, notify the admin lobby
+        if (!isAdmin) {
+          io.to("admin_support_lobby").emit("new-support-notification", payload);
+          console.log(`[Socket] Sent support notification to admin lobby`);
+        }
+      } catch (error) {
+        console.error("Socket error saving support message:", error);
+      }
     });
 
     socket.on("disconnect", () => {

@@ -118,7 +118,7 @@ const Navbar = ({ onToggleSidebar, isSidebarCollapsed }) => {
       links: [
         { name: "Dashboard", path: "/user" },
         { name: "Courses", path: "/user/courses" },
-        { name: "Blogs", path: "/blogs" },
+        { name: "Contact Us", path: "/contact" },
         { name: "Resume", path: "/resume-builder" },
       ],
       themeColor: "blue",
@@ -131,6 +131,7 @@ const Navbar = ({ onToggleSidebar, isSidebarCollapsed }) => {
         { name: "Portfolio", path: "/tutor/portfolio" },
         { name: "My Courses", path: "/tutor/manage-courses" },
         { name: "Students", path: "/tutor/enrollments" },
+        { name: "Contact Us", path: "/contact" },
       ],
       themeColor: "cyan",
       accentHex: "#06b6d4",
@@ -141,6 +142,7 @@ const Navbar = ({ onToggleSidebar, isSidebarCollapsed }) => {
         { name: "Command", path: "/admin" },
         { name: "Course Approvals", path: "/admin/approvals" },
         { name: "Tutor Approvals", path: "/admin/tutor-approvals" },
+        { name: "Contact Us", path: "/contact" },
       ],
       themeColor: "emerald",
       accentHex: "#10b981",
@@ -382,45 +384,12 @@ const Navbar = ({ onToggleSidebar, isSidebarCollapsed }) => {
             </div>
           </div>
 
+          {/* Mobile Search Toggle (Optional) or just Logo stuff */}
           <div className="lg:hidden flex items-center gap-4">
-            <motion.button
-              whileTap={{ scale: 0.9 }}
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="p-3 bg-slate-900/50 border border-slate-800 rounded-xl text-slate-300"
-            >
-              {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </motion.button>
+            {/* The primary toggle is already in the left section (onToggleSidebar) */}
           </div>
         </div>
       </div>
-
-      <AnimatePresence>
-        {isMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden bg-[#020617] border-t border-white/5 overflow-hidden backdrop-blur-3xl"
-          >
-            <div className="px-6 py-10 space-y-8">
-              <div className="flex flex-col gap-6">
-                {config.links.map((link, i) => (
-                  <motion.div key={link.path} initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: i * 0.1 }}>
-                    <Link
-                      to={link.path}
-                      onClick={() => setIsMenuOpen(false)}
-                      className={`flex items-center justify-between group ${isActive(link.path) ? themeClasses.active : "text-slate-300"}`}
-                    >
-                      <span className="text-2xl font-black uppercase italic tracking-tighter">{link.name}</span>
-                      <ChevronRight className={`w-5 h-5 ${isActive(link.path) ? "opacity-100" : "opacity-0 group-hover:opacity-100"} transition-all`} />
-                    </Link>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </motion.nav>
   );
 };

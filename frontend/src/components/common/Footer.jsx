@@ -19,7 +19,7 @@ const Footer = () => {
                                 <Globe className="w-6 h-6 text-white" />
                             </div>
                             <span className="text-2xl font-black tracking-tighter uppercase italic">
-                                Ann<span className="text-blue-500">chella</span>
+                                Integra<span className="text-blue-500">X</span>
                             </span>
                         </div>
                         <p className="text-slate-400 text-sm leading-relaxed max-w-xs">
@@ -75,10 +75,10 @@ const Footer = () => {
                 {/* Bottom Bar */}
                 <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
                     <div className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">
-                        © {currentYear} Annchella Industrial. All Protocol Reserved.
+                        © {currentYear} IntegraX Industrial. All Protocol Reserved.
                     </div>
                     <div className="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase tracking-widest">
-                        Made with <Heart className="w-3 h-3 text-red-500 fill-current" /> by the Core Team
+                        Made with <Heart className="w-3 h-3 text-red-500 fill-current" /> by the IntegraX Team
                     </div>
                 </div>
             </div>

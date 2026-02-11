@@ -1,16 +1,38 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "react-router-dom";
 
 const Layout = ({ children }) => {
-    const [collapsed, setCollapsed] = useState(false);
+    // On mobile, collapsed actually means HIDDEN.
+    // We initialize based on screen width
+    const [collapsed, setCollapsed] = useState(window.innerWidth < 768);
     const location = useLocation();
     const isCodeRoom = location.pathname.startsWith("/code-room");
 
+    // Close sidebar on mobile when navigating
+    useEffect(() => {
+        if (window.innerWidth < 768) {
+            setCollapsed(true);
+        }
+    }, [location.pathname]);
+
     return (
-        <div className="min-h-screen bg-[#020617] text-white overflow-x-hidden">
+        <div className="min-h-screen bg-[#020617] text-white overflow-x-hidden relative">
+            {/* Mobile Sidebar Overlay */}
+            <AnimatePresence>
+                {!collapsed && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={() => setCollapsed(true)}
+                        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[85] md:hidden"
+                    />
+                )}
+            </AnimatePresence>
+
             {!isCodeRoom && (
                 <Navbar onToggleSidebar={() => setCollapsed(!collapsed)} isSidebarCollapsed={collapsed} />
             )}

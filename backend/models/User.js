@@ -63,6 +63,21 @@ const userSchema = new mongoose.Schema(
         type: String,
       },
     ],
+    settings: {
+      theme: { type: String, enum: ["dark", "light"], default: "dark" },
+      avatar: { type: String, default: "cpu" },
+      editorTheme: { type: String, default: "vs-dark" },
+      fontSize: { type: Number, default: 14 },
+      notifications: {
+        email: { type: Boolean, default: true },
+        push: { type: Boolean, default: true }
+      }
+    },
+    socials: {
+      github: { type: String, default: "" },
+      linkedin: { type: String, default: "" },
+      twitter: { type: String, default: "" }
+    }
   },
   { timestamps: true }
 );

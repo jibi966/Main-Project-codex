@@ -23,6 +23,10 @@ app.use("/api/compile", compileRoutes);
 const liveClassRoutes = require("./routes/liveClassRoutes");
 
 app.use("/api/live-classes", liveClassRoutes);
+const contactRoutes = require("./routes/contactRoutes");
+app.use("/api/contacts", contactRoutes);
+const supportRoutes = require("./routes/supportRoutes");
+app.use("/api/support", supportRoutes);
 const aiRoutes = require("./routes/aiRoutes");
 app.use("/api/ai", aiRoutes);
 const challengeRoutes = require("./routes/challengeRoutes");
@@ -41,5 +45,7 @@ const paymentRoutes = require("./routes/paymentRoutes");
 app.use("/api/payment", paymentRoutes);
 const chatRoutes = require("./routes/chatRoutes");
 app.use("/api/chats", chatRoutes);
+const settingsRoutes = require("./routes/settingsRoutes");
+app.use("/api/settings", settingsRoutes);
 
 module.exports = app;

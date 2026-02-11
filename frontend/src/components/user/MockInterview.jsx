@@ -23,8 +23,8 @@ const MockInterview = () => {
         setLoading(true);
         try {
             const res = await api.post("/ai-interview/start", { jobTitle, difficulty });
-            setMessages([{ role: "model", parts: [{ text: res.message }] }]);
-            setSessionId(res.sessionId);
+            setMessages([{ role: "model", parts: [{ text: res.data.message }] }]);
+            setSessionId(res.data.sessionId);
             setMode("interview");
         } catch (error) {
             console.error("Interview start failed", error);
@@ -50,7 +50,7 @@ const MockInterview = () => {
                 jobTitle
             });
 
-            setMessages((prev) => [...prev, { role: "model", parts: [{ text: res.message }] }]);
+            setMessages((prev) => [...prev, { role: "model", parts: [{ text: res.data.message }] }]);
         } catch (error) {
             console.error("Chat failed", error);
         } finally {

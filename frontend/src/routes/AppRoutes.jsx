@@ -19,7 +19,6 @@ import EditCourse from "../components/tutor/EditCourse";
 import ScheduleLiveClass from "../components/tutor/ScheduleLiveClass";
 
 // User components
-
 import CodeRoom from "../components/user/CodeRoom";
 import CodeEditor from "../components/user/CodeEditor";
 import PracticeEditor from "../components/user/PracticeEditor";
@@ -47,6 +46,10 @@ import PublicTutorPortfolio from "../components/user/PublicTutorPortfolio";
 import Layout from "../components/common/Layout";
 import TutorDoubts from "../components/tutor/TutorDoubts";
 import NotificationManager from "../components/common/NotificationManager";
+import ContactUs from "../components/common/ContactUs";
+import SupportChat from "../components/common/SupportChat";
+import AdminSupport from "../components/admin/AdminSupport";
+import Settings from "../components/common/Settings";
 
 const AppRoutes = () => {
   return (
@@ -229,6 +232,30 @@ const AppRoutes = () => {
           }
         />
 
+        <Route path="/contact" element={<Layout><ContactUs /></Layout>} />
+
+        <Route
+          path="/support"
+          element={
+            <ProtectedRoute roles={["user", "tutor", "admin"]}>
+              <Layout>
+                <SupportChat />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute roles={["user", "tutor", "admin"]}>
+              <Layout>
+                <Settings />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+
         <Route
           path="/tutor"
           element={
@@ -322,6 +349,16 @@ const AppRoutes = () => {
           }
         />
         <Route
+          path="/admin/support"
+          element={
+            <ProtectedRoute role="admin">
+              <Layout>
+                <AdminSupport />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/admin/tutor-approvals"
           element={
             <ProtectedRoute role="admin">
@@ -341,7 +378,6 @@ const AppRoutes = () => {
             </ProtectedRoute>
           }
         />
-        {/* ================= FALLBACK ================= */}
         <Route
           path="/admin/course-management"
           element={
@@ -352,6 +388,8 @@ const AppRoutes = () => {
             </ProtectedRoute>
           }
         />
+
+        {/* ================= FALLBACK ================= */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>

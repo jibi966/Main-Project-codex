@@ -1,7 +1,9 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://main-project-codex-five.vercel.app/api",
+  baseURL: (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+    ? "http://localhost:5000/api"
+    : "https://main-project-codex-five.vercel.app/api",
 });
 
 // Add a request interceptor to include the JWT token
@@ -9,7 +11,7 @@ api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers.Authorization = `Bearer ${token} `;
     }
     return config;
   },

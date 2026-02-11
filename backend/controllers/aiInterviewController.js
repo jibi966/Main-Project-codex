@@ -4,8 +4,8 @@ const getAIModel = () => {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) return null;
     const genAI = new GoogleGenerativeAI(apiKey);
-    // Using gemini-1.5-flash-latest which points to the most current stable snapshot
-    return genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
+    // Using gemini-flash-latest which is confirmed to be supported
+    return genAI.getGenerativeModel({ model: "gemini-flash-latest" });
 };
 
 // Start a new mock interview session
@@ -56,8 +56,18 @@ exports.interviewChat = async (req, res) => {
         const { message, history, jobTitle } = req.body;
         console.log(`DEBUG: Interview message received: ${message}`);
 
+        // Gemini requires history to start with a 'user' role.
+        // Since our flow starts with the model's intro, we prepend a dummy user intent.
+        let chatHistory = history || [];
+        if (chatHistory.length > 0 && chatHistory[0].role === "model") {
+            chatHistory = [
+                { role: "user", parts: [{ text: "I am ready for my mock interview. Please begin." }] },
+                ...chatHistory
+            ];
+        }
+
         const chat = model.startChat({
-            history: history || [],
+            history: chatHistory,
             generationConfig: { maxOutputTokens: 500 },
         });
 
@@ -70,6 +80,8 @@ exports.interviewChat = async (req, res) => {
         });
     } catch (error) {
         console.error("DEBUG ERR in interviewChat:", error);
+        console.error("DEBUG ERR Stack:", error.stack);
+        console.error("DEBUG ERR Message Body:", req.body);
         res.status(500).json({
             message: "AI failed to process your message. Please check your connection.",
             error: error.message

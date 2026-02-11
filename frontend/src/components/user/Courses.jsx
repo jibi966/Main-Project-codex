@@ -86,7 +86,7 @@ const HorizontalCourseCard = ({ course, isEnrolled, onPurchase, navigate }) => {
         </div>
 
         {/* Pricing & CTA Part */}
-        <div className="lg:w-48 shrink-0 flex flex-col md:items-end justify-center gap-4 border-l border-white/5 lg:pl-10">
+        <div className="lg:w-48 shrink-0 flex flex-col md:items-end justify-center gap-4 border-t md:border-t-0 md:border-l border-white/5 pt-6 md:pt-0 lg:pl-10">
           <div className="flex flex-col md:items-end">
             <div className="text-3xl font-black text-white tracking-tighter italic">₹{course.price}</div>
             <div className="text-[10px] text-slate-600 font-bold line-through">₹{course.price * 2}</div>

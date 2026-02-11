@@ -4,16 +4,31 @@
 
 @layer utilities {
   @keyframes progress-fast {
-    0% { width: 0%; }
-    100% { width: 100%; }
+    0% {
+      width: 0%;
+    }
+
+    100% {
+      width: 100%;
+    }
   }
+
   .animate-progress-fast {
     animation: progress-fast 2s ease-in-out forwards;
   }
+
   @keyframes bounce-subtle {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-4px); }
+
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+
+    50% {
+      transform: translateY(-4px);
+    }
   }
+
   .animate-bounce-subtle {
     animation: bounce-subtle 3s ease-in-out infinite;
   }

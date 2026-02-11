@@ -4,7 +4,7 @@ import {
     ChevronLeft, ChevronRight, LayoutDashboard, BookOpen,
     MessageSquare, Zap, Trophy, Video, Award, Terminal,
     Settings, Users, Globe, Layers, BarChart3, ShieldCheck,
-    Menu
+    Menu, LifeBuoy, CheckCircle
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -95,6 +95,7 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
                 { name: "Mock Interview", path: "/user/mock-interview", icon: MessageSquare },
                 { name: "Live Ops", path: "/user/live-classes", icon: Video },
                 { name: "Resume", path: "/resume-builder", icon: Award },
+                { name: "Support", path: "/support", icon: LifeBuoy },
             ],
             themeColor: "blue",
         },
@@ -106,13 +107,17 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
                 { name: "Students", path: "/tutor/enrollments", icon: Users },
                 { name: "Earnings", path: "/tutor/purchases", icon: BarChart3 },
                 { name: "Resume", path: "/resume-builder", icon: Award },
+                { name: "Support", path: "/support", icon: LifeBuoy },
             ],
             themeColor: "cyan",
         },
         admin: {
             links: [
-                { name: "Command", path: "/admin", icon: ShieldCheck },
-                { name: "Approvals", path: "/admin/approvals", icon: Layers },
+                { name: "Console", path: "/admin", icon: Terminal },
+                { name: "Approvals", path: "/admin/approvals", icon: CheckCircle },
+                { name: "Support", path: "/admin/support", icon: LifeBuoy },
+                { name: "Tutors", path: "/admin/tutor-approvals", icon: Users },
+                { name: "Courses", path: "/admin/course-management", icon: Layers },
                 { name: "Purchases", path: "/admin/purchases", icon: BarChart3 },
             ],
             themeColor: "emerald",
@@ -129,10 +134,17 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
 
     const isActive = (path) => location.pathname === path;
 
+    const isMobile = window.innerWidth < 768;
+
     return (
         <motion.aside
-            animate={{ width: collapsed ? 80 : 256 }}
-            className="fixed left-0 top-0 h-screen z-[90] hidden md:flex flex-col bg-[#020617]/80 backdrop-blur-3xl border-r border-white/5 transition-all duration-300"
+            initial={false}
+            animate={{
+                x: isMobile && collapsed ? -300 : 0,
+                width: isMobile ? 280 : (collapsed ? 80 : 256)
+            }}
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            className="fixed left-0 top-0 h-screen z-[90] flex flex-col bg-[#020617]/95 md:bg-[#020617]/80 backdrop-blur-3xl border-r border-white/5 shadow-2xl md:shadow-none"
         >
             {/* Spacer for Top Navbar */}
             <div className="h-24 flex items-center justify-center border-b border-white/5">
